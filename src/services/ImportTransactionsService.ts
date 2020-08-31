@@ -18,18 +18,17 @@ class ImportTransactionsService {
     const createTransactionService = new CreateTransactionService();
 
     const data = await readCSV(filePath);
-    // const transactions: Transaction[] = [];
-    const [...transactions] = await data.map(
-      async ({ category, title, type, value }): Promise<Transaction> => {
-        const transaction = await createTransactionService.execute({
-          title,
-          type: type as 'income' | 'outcome',
-          value,
-          category,
-        });
-        return transaction;
-      },
-    );
+    const transactions: Transaction[] = [];
+    for (let i = 0; i < data.length; i++) {
+      const { category, title, type, value } = data[i];
+      const transaction = await createTransactionService.execute({
+        title,
+        type: type as 'income' | 'outcome',
+        value,
+        category,
+      });
+      transactions.push(transaction);
+    }
     return transactions;
   }
 }
